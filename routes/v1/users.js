@@ -12,11 +12,11 @@ const storage = multer.diskStorage({
     cb(null, filename);
   },
 });
-const tokenMiddleware = require("../middleware/token.middleware");
+const tokenMiddleware = require("../../middleware/token.middleware");
 
 const upload = multer({ storage: storage });
 // MODEL
-var UserSchema = require("../models/users.model");
+var UserSchema = require("../../models/users.model");
 
 // TODO : get users
 router.get("/", async function (req, res, next) {
