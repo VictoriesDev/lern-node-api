@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const multer = require("multer");
-var brypt = require("bcrypt");
+var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 // MODEL
 var UserSchema = require("../models/users.model");
 
-/* GET users listing. */
+// TODO : get users
 router.get("/", async function (req, res, next) {
   let users = await UserSchema.find({});
   res.send({
@@ -27,7 +27,8 @@ router.get("/", async function (req, res, next) {
   });
 });
 
-router.post("/", async function (req, res, next) {
+// TODO : create user
+router.post("/insert", async function (req, res, next) {
   const { name, age, password } = req.body;
 
   console.log(name);
@@ -35,7 +36,7 @@ router.post("/", async function (req, res, next) {
   const newUser = new UserSchema({
     name,
     age,
-    password,
+    password: await bcrypt.hash(password, 10),
   });
   await newUser.save();
   res.send({
@@ -43,6 +44,7 @@ router.post("/", async function (req, res, next) {
   });
 });
 
+// TODO : update user
 router.put("/:id", async function (req, res, next) {
   const { name, age, password } = req.body;
   const { id } = req.params;
@@ -79,15 +81,46 @@ router.post(
     const newUser = new UserSchema({
       name,
       age,
-      password: await brypt.hash(password, 10),
+      password: await bcrypt.hash(password, 10),
     });
     await newUser.save();
-
-    const token = jwt.sign({ id: "TEST " }, "1234");
     res.send({
       status: "success",
       token,
     });
   }
 );
+
+router.post("/login", async (req, res, next) => {
+  const { name, password } = req.body;
+  const user = await UserSchema.findOne({ name });
+  try {
+    if (!user) {
+      return res.status(401).send({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    // check password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({
+        status: "error",
+        message: "Invalid password",
+      });
+    }
+    const token = jwt.sign({ id: user._id }, "1234");
+    return res.send({
+      status: "success",
+      token,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+});
 module.exports = router;
