@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { response } = require("../func/response.js");
 
 // MODEL
 const UserSchema = require("../models/users.model");
@@ -7,9 +8,10 @@ module.exports = async function (req, res, next) {
     const token = req.headers.authorization;
 
     if (!token) {
-      return res
-        .status(401)
-        .send({ status: "error", message: "No token provided" });
+      return response(res, 401, {
+        status: 401,
+        message: "No token provided",
+      });
     }
     console.log("token", token);
 
@@ -17,13 +19,18 @@ module.exports = async function (req, res, next) {
     console.log("decoded", decoded);
     const checkUser = await UserSchema.findById(decoded.id);
     if (!checkUser) {
-      return res
-        .status(401)
-        .send({ status: "error", message: "User not found" });
+      return response(res, 401, {
+        status: 401,
+        message: "Token not found",
+      });
     }
-    console.log("Login ผ่านแล้วนะ");
+    req.user_id = decoded.id;
+    req.user_role = decoded.role;
     next();
   } catch (error) {
-    return res.status(401).send({ status: "error", message: "Invalid token" });
+    return response(res, 401, {
+      status: 401,
+      message: "Invalid token",
+    });
   }
 };

@@ -7,7 +7,7 @@ var logger = require("morgan");
 // var indexRouter = require("./routes/index");
 // var usersRouter = require("./routes/users");
 
-const v1_main_router = require("./routes/v1/index");
+const AccessVersion = require("./routes/accessVersion.js");
 require("dotenv").config();
 require("./db/db_test");
 var cors = require("cors");
@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // ROUTES - ย้ายมาก่อน error handlers
-app.use("/api/v1", v1_main_router);
+app.use("/api", AccessVersion);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

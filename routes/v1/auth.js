@@ -4,17 +4,7 @@ const multer = require("multer");
 var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const { response } = require("../../func/response.js");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/images");
-  },
-  filename: function (req, file, cb) {
-    const filename = new Date().getTime() + "-" + file.originalname;
-    cb(null, filename);
-  },
-});
 
-const upload = multer({ storage: storage });
 // MODEL
 var UserSchema = require("../../models/users.model");
 
@@ -36,7 +26,7 @@ router.post("/register", async function (req, res, next) {
   await newUser.save();
 
   await response(res, 201, {
-    status: "success",
+    status: 201,
     message: "User registered successfully",
   });
 });
@@ -44,13 +34,12 @@ router.post("/register", async function (req, res, next) {
 // TODO เข้าสู่ระบบ
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
-  console.log("email", email);
   const check_user = await UserSchema.findOne({ email });
   try {
     // ถ้าไม่พบ user
     if (check_user.email == "") {
       return await response(res, 400, {
-        status: "error",
+        status: 400,
         message: "User not found",
       });
     }
@@ -59,14 +48,14 @@ router.post("/login", async (req, res, next) => {
     const isPasswordValid = bcrypt.compare(password, check_user.password);
     if (!isPasswordValid) {
       return await response(res, 401, {
-        status: "error",
+        status: 401,
         message: "Invalid password",
       });
     }
 
     if (check_user.status !== "approved") {
       return await response(res, 401, {
-        status: "error",
+        status: 401,
         message: "User not approved",
       });
     }
@@ -81,8 +70,8 @@ router.post("/login", async (req, res, next) => {
     });
   } catch (error) {
     console.log("error", error);
-    return res.status(500).send({
-      status: "error",
+    return response(res, 500, {
+      status: 500,
       message: "Internal server error",
     });
   }
