@@ -1,9 +1,9 @@
 var express = require("express");
 const tokenMiddleware = require("../../middleware/token.middleware");
-const AuthRouter = require("./auth.js");
-const UserRouter = require("./users.js");
-const ProductRouter = require("./product.js");
-const OrderRouter = require("./orders.js");
+const AuthRouter = require("./authRoute.js");
+const UserRouter = require("./usersRoute.js");
+const ProductRouter = require("./productRoute.js");
+const OrderRouter = require("./ordersRoute.js");
 const router = express.Router();
 
 // LOGIN

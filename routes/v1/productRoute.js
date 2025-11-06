@@ -30,7 +30,7 @@ router.get("/", async function (req, res, next) {
     }
     await response(res, 200, {
       status: 200,
-      message: "ผลิตภัณฑ์ทั้งหมด",
+      message: "ข้อมูลสินค้าทั้งหมด",
       data: products,
     });
   } catch (error) {
@@ -49,13 +49,13 @@ router.get("/:id", async function (req, res, next) {
     if (products.length === 0) {
       return await response(res, 404, {
         status: 404,
-        message: "ไม่พบผลิตภัณฑ์",
+        message: "ไม่พบข้อมูลสินค้า",
         data: [],
       });
     }
     await response(res, 200, {
       status: 200,
-      message: "พบผลิตภัณฑ์",
+      message: "พบข้อมูลสินค้า",
       data: products,
     });
   } catch (error) {
@@ -81,7 +81,7 @@ router.post("/", async function (req, res, next) {
     await newProduct.save();
     await response(res, 201, {
       status: 201,
-      message: "Product created successfully",
+      message: "สร้างสินค้าสำเร็จ",
     });
   } catch (error) {
     return await response(res, 500, {
@@ -113,7 +113,7 @@ router.put("/:id", async function (req, res, next) {
     await ProductSchema.findOneAndUpdate({ _id: id }, newData, { new: true });
     await response(res, 200, {
       status: 200,
-      message: "Product updated successfully",
+      message: "อัพเดตสินค้าสำเร็จ",
     });
   } catch (error) {
     return await response(res, 500, {
@@ -130,7 +130,7 @@ router.delete("/:id", async function (req, res, next) {
     await ProductSchema.findOneAndDelete({ _id: id });
     await response(res, 200, {
       status: 200,
-      message: "ลบผลิตภัณฑ์สำเร็จ",
+      message: "ลบสินค้าสำเร็จ",
     });
   } catch (error) {
     return await response(res, 500, {
@@ -149,7 +149,7 @@ router.get("/:id/orders", async (req, res, next) => {
       .populate("product_id", "name price stock"); // ดึงข้อมูลสินค้า
     return await response(res, 200, {
       status: 200,
-      message: "รายการสั่งซื้อสำหรับผลิตภัณฑ์นี้",
+      message: "รายการสั่งซื้อสำหรับสินค้านี้",
       data: orders,
     });
   } catch (error) {
@@ -172,7 +172,7 @@ router.post("/:id/orders", async (req, res, next) => {
     if (!product) {
       return await response(res, 404, {
         status: 404,
-        message: "ไม่พบผลิตภัณฑ์",
+        message: "กรุณาเลือกสินค้าที่ต้องการสั่งซื้อ",
       });
     }
     if (product.stock < quantity) {

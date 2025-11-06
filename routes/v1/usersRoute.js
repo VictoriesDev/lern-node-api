@@ -15,21 +15,20 @@ router.put("/:id/approve", async function (req, res, next) {
     if (userRole !== "admin") {
       return await response(res, 403, {
         status: 403,
-        message: "You do not have permission to approve users",
+        message: "คุณไม่มีสิทธิ์อนุมัติผู้ใช้",
       });
     }
-    const updatedUser = await UserSchema.findByIdAndUpdate(
+    await UserSchema.findByIdAndUpdate(
       id,
       {
-        status: "approved",
+        status_approve: true,
       },
       { new: true }
     );
 
     return await response(res, 200, {
       status: 200,
-      message: "User approved successfully",
-      data: updatedUser,
+      message: "อนุมัติผู้ใช้สำเร็จ",
     });
   } catch (error) {
     return await response(res, 500, {

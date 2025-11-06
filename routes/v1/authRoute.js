@@ -19,15 +19,13 @@ router.post("/register", async function (req, res, next) {
   const newUser = new UserSchema({
     email,
     password: await bcrypt.hash(password, 10),
-    role: "admin",
-    status: "approved",
   });
 
   await newUser.save();
 
-  await response(res, 201, {
+  return await response(res, 201, {
     status: 201,
-    message: "User registered successfully",
+    message: "สมัคร User สำเร็จ",
   });
 });
 
@@ -40,7 +38,7 @@ router.post("/login", async (req, res, next) => {
     if (check_user.email == "") {
       return await response(res, 400, {
         status: 400,
-        message: "User not found",
+        message: "ไม่พบผู้ใช้ในระบบ",
       });
     }
 
@@ -49,14 +47,14 @@ router.post("/login", async (req, res, next) => {
     if (!isPasswordValid) {
       return await response(res, 401, {
         status: 401,
-        message: "Invalid password",
+        message: "รหัสผ่านไม่ถูกต้อง",
       });
     }
 
-    if (check_user.status !== "approved") {
+    if (check_user.status_approve !== true) {
       return await response(res, 401, {
         status: 401,
-        message: "User not approved",
+        message: "ผู้ใช้ยังไม่ได้รับการอนุมัติ",
       });
     }
 
