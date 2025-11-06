@@ -18,9 +18,9 @@ router.get("/", async function (req, res, next) {
         data: [],
       });
     }
-    const data_products = [];
+    const show_products = [];
     for (const product of products) {
-      data_products.push({
+      show_products.push({
         name: product.name,
         description: product.description,
         price: product.price,
@@ -31,7 +31,7 @@ router.get("/", async function (req, res, next) {
     return await response(res, 200, {
       status: 200,
       message: "ข้อมูลสินค้าทั้งหมด",
-      data: products,
+      data: show_products,
     });
   } catch (error) {
     return await response(res, 500, {
@@ -54,10 +54,19 @@ router.get("/:id", async function (req, res, next) {
         data: null,
       });
     }
+
+    const show_products = {
+      name: products[0].name,
+      description: products[0].description,
+      price: products[0].price,
+      stock: products[0].stock,
+      createdAt: products[0].createdAt,
+    };
+
     return await response(res, 200, {
       status: 200,
       message: "พบข้อมูลสินค้า",
-      data: products,
+      data: show_products,
     });
   } catch (error) {
     return await response(res, 500, {
@@ -162,10 +171,21 @@ router.get("/:id/orders", async (req, res, next) => {
         data: null,
       });
     }
+
+    const show_orders = [];
+    for (const order of orders) {
+      show_orders.push({
+        user: order.user_id.email,
+        product: order.product_id.name,
+        quantity: order.quantity,
+        totalAmount: order.totalAmount,
+        orderDate: order.createdAt,
+      });
+    }
     return await response(res, 200, {
       status: 200,
       message: "รายการสั่งซื้อสำหรับสินค้านี้",
-      data: orders,
+      data: show_orders,
     });
   } catch (error) {
     return await response(res, 500, {

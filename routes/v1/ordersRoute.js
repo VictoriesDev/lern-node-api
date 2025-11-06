@@ -20,10 +20,20 @@ router.get("/", async (req, res, next) => {
         data: null,
       });
     }
+
+    const show_orders = [];
+    for (const order of orders) {
+      show_orders.push({
+        user_email: order.user_id.email,
+        product_name: order.product_id.name,
+        quantity: order.quantity,
+        totalAmount: order.totalAmount,
+      });
+    }
     return await response(res, 200, {
       status: 200,
       message: "รายการสั่งซื้อทั้งหมด",
-      data: orders,
+      data: show_orders,
     });
   } catch (error) {
     return await response(res, 500, {
