@@ -28,7 +28,7 @@ router.get("/", async function (req, res, next) {
         createdAt: product.createdAt,
       });
     }
-    await response(res, 200, {
+    return await response(res, 200, {
       status: 200,
       message: "ข้อมูลสินค้าทั้งหมด",
       data: products,
@@ -37,6 +37,7 @@ router.get("/", async function (req, res, next) {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
@@ -50,10 +51,10 @@ router.get("/:id", async function (req, res, next) {
       return await response(res, 404, {
         status: 404,
         message: "ไม่พบข้อมูลสินค้า",
-        data: [],
+        data: null,
       });
     }
-    await response(res, 200, {
+    return await response(res, 200, {
       status: 200,
       message: "พบข้อมูลสินค้า",
       data: products,
@@ -62,6 +63,7 @@ router.get("/:id", async function (req, res, next) {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
@@ -79,9 +81,10 @@ router.post("/", async function (req, res, next) {
     });
 
     await newProduct.save();
-    await response(res, 201, {
+    return await response(res, 201, {
       status: 201,
       message: "สร้างสินค้าสำเร็จ",
+      data: newProduct,
     });
   } catch (error) {
     return await response(res, 500, {
@@ -111,14 +114,16 @@ router.put("/:id", async function (req, res, next) {
     }
 
     await ProductSchema.findOneAndUpdate({ _id: id }, newData, { new: true });
-    await response(res, 200, {
+    return await response(res, 200, {
       status: 200,
       message: "อัพเดตสินค้าสำเร็จ",
+      data: [],
     });
   } catch (error) {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
@@ -128,14 +133,16 @@ router.delete("/:id", async function (req, res, next) {
   const { id } = req.params;
   try {
     await ProductSchema.findOneAndDelete({ _id: id });
-    await response(res, 200, {
+    return await response(res, 200, {
       status: 200,
       message: "ลบสินค้าสำเร็จ",
+      data: [],
     });
   } catch (error) {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
@@ -147,6 +154,14 @@ router.get("/:id/orders", async (req, res, next) => {
     const orders = await OrderSchema.find({ product_id: id })
       .populate("user_id", "username email") // ดึงข้อมูล user ที่เกี่ยวข้อง
       .populate("product_id", "name price stock"); // ดึงข้อมูลสินค้า
+
+    if (orders.length === 0) {
+      return await response(res, 404, {
+        status: 404,
+        message: "ไม่พบคำสั่งซื้อสำหรับสินค้านี้",
+        data: null,
+      });
+    }
     return await response(res, 200, {
       status: 200,
       message: "รายการสั่งซื้อสำหรับสินค้านี้",
@@ -156,6 +171,7 @@ router.get("/:id/orders", async (req, res, next) => {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
@@ -163,8 +179,8 @@ router.get("/:id/orders", async (req, res, next) => {
 // TODO สร้างคำสั่งซื้อ
 router.post("/:id/orders", async (req, res, next) => {
   const { id } = req.params;
-  const { user_id, quantity } = req.body;
-
+  const { quantity } = req.body;
+  const user_id = req.user_id;
   try {
     // check stock
     const product = await ProductSchema.findById(id);
@@ -173,12 +189,14 @@ router.post("/:id/orders", async (req, res, next) => {
       return await response(res, 404, {
         status: 404,
         message: "กรุณาเลือกสินค้าที่ต้องการสั่งซื้อ",
+        data: null,
       });
     }
     if (product.stock < quantity) {
       return await response(res, 400, {
         status: 400,
         message: "สินค้าไม่เพียงพอในสต็อก",
+        data: null,
       });
     }
 
@@ -199,11 +217,13 @@ router.post("/:id/orders", async (req, res, next) => {
     return await response(res, 201, {
       status: 201,
       message: "สร้างคำสั่งซื้อสำเร็จ",
+      data: newOrder,
     });
   } catch (error) {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });

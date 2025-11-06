@@ -12,6 +12,14 @@ router.get("/", async (req, res, next) => {
     const orders = await OrderSchema.find()
       .populate("user_id", "username email") // ดึงข้อมูล user ที่เกี่ยวข้อง
       .populate("product_id", "name price stock"); // ดึงข้อมูลสินค้า
+
+    if (orders.length === 0) {
+      return await response(res, 404, {
+        status: 404,
+        message: "ไม่พบรายการสั่งซื้อ",
+        data: null,
+      });
+    }
     return await response(res, 200, {
       status: 200,
       message: "รายการสั่งซื้อทั้งหมด",
@@ -21,6 +29,7 @@ router.get("/", async (req, res, next) => {
     return await response(res, 500, {
       status: 500,
       message: error.message,
+      data: null,
     });
   }
 });
