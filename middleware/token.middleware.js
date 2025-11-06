@@ -5,7 +5,8 @@ const { response } = require("../func/response.js");
 const UserSchema = require("../models/users.model");
 module.exports = async function (req, res, next) {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers["authorization"]?.split(" ")[1];
+    // console.log("token", token);
 
     if (!token) {
       return response(res, 401, {

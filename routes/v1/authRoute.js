@@ -16,17 +16,24 @@ router.get("/", function (req, res, next) {
 router.post("/register", async function (req, res, next) {
   const { email, password } = req.body;
 
-  const newUser = new UserSchema({
-    email,
-    password: await bcrypt.hash(password, 10),
-  });
+  try {
+    const newUser = new UserSchema({
+      email,
+      password: await bcrypt.hash(password, 10),
+    });
 
-  await newUser.save();
+    await newUser.save();
 
-  return await response(res, 201, {
-    status: 201,
-    message: "สมัคร User สำเร็จ",
-  });
+    return await response(res, 201, {
+      status: 201,
+      message: "สมัคร User สำเร็จ",
+    });
+  } catch (error) {
+    return await response(res, 500, {
+      status: 500,
+      message: error.message,
+    });
+  }
 });
 
 // TODO เข้าสู่ระบบ
