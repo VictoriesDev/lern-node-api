@@ -5,7 +5,7 @@ const userSchema = new Schema(
   {
     email: { type: String },
     password: { type: String },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
+    role: { type: String, enum: ["seller", "buyer"], default: "buyer" },
     status_approve: { type: Boolean, default: false },
   },
   {

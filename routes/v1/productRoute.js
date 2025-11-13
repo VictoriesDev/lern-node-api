@@ -21,6 +21,7 @@ router.get("/", async function (req, res, next) {
     const show_products = [];
     for (const product of products) {
       show_products.push({
+        id : product._id,
         name: product.name,
         description: product.description,
         price: product.price,
@@ -200,7 +201,7 @@ router.get("/:id/orders", async (req, res, next) => {
 router.post("/:id/orders", async (req, res, next) => {
   const { id } = req.params;
   const { quantity } = req.body;
-  const user_id = req.user_id;
+  const user_id = req.user_id ;
   try {
     // check stock
     const product = await ProductSchema.findById(id);

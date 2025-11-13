@@ -5,9 +5,9 @@ const { response } = require("../func/response.js");
 const UserSchema = require("../models/users.model");
 module.exports = async function (req, res, next) {
   try {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    // const token = req.headers["authorization"]?.split(" ")[1];
     // console.log("token", token);
-
+    const token = req.cookies.token;  
     if (!token) {
       return response(res, 401, {
         status: 401,

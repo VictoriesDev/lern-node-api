@@ -8,8 +8,8 @@ const router = express.Router();
 
 // LOGIN
 router.use("/", AuthRouter);
-router.use("/users", tokenMiddleware, UserRouter);
-router.use("/products", tokenMiddleware, ProductRouter);
+router.use("/users" , tokenMiddleware, UserRouter);
+router.use("/products" , tokenMiddleware, ProductRouter);
 router.use("/orders", tokenMiddleware, OrderRouter);
 
 module.exports = router;

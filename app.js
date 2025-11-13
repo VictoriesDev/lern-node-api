@@ -13,7 +13,11 @@ require("./db/db_test");
 var cors = require("cors");
 
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:8080",
+  ] ,
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 var app = express();
